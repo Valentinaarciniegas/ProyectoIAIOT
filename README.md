@@ -58,8 +58,10 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 python app.py                      # desarrollo, puerto 5000
-gunicorn -w 2 -b 0.0.0.0:5000 app:app   # producción
+gunicorn --workers 1 --threads 4 -b 0.0.0.0:5000 app:app   # producción
 ```
+
+Se usa un solo proceso con varios hilos porque el `Lock` que protege el CSV solo funciona dentro de un proceso.
 
 Variables de entorno opcionales: `MONGO_URI`, `MONGO_DB`, `MONGO_COLECCION`, `CSV_FILE`, `ZONA_HORARIA`.
 
@@ -69,6 +71,11 @@ Variables de entorno opcionales: `MONGO_URI`, `MONGO_DB`, `MONGO_COLECCION`, `CS
 - La VM usa red NAT con reenvío de puertos de VirtualBox: host `5000` → VM `5000` (Flask) y host `127.0.0.1:2222` → VM `22` (SSH). El firewall de Windows permite el puerto 5000 solo desde la red local.
 - El ESP32 envía a `http://<IP-del-PC-en-el-WiFi>:5000/api/mediciones`.
 - MongoDB solo escucha en `127.0.0.1` dentro de la VM. Para consultarlo: `mongosh cocatrace` en la VM, o MongoDB Compass con túnel SSH.
+- La app corre como servicio systemd (`deploy/cocatrace.service`, con gunicorn). Arranca sola después de MongoDB y se reinicia si falla. Para instalarlo: `sudo bash deploy/instalar_servicio.sh`.
+  - Estado: `systemctl status cocatrace`
+  - Logs: `journalctl -u cocatrace -f`
+  - Reiniciar tras cambiar código: `sudo systemctl restart cocatrace`
+- En Windows, `scripts/iniciar.ps1` enciende la VM sin ventana y verifica los servicios. `scripts/apagar.ps1` la apaga de forma ordenada.
 
 ## Despliegue en AWS
 
