@@ -1,0 +1,63 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f4f1;
+    text-align: center;
+    margin: 0;
+    padding: 30px;
+}
+
+h1 {
+    color: #216e39;
+}
+
+.contenedor {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.tarjeta {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    width: 220px;
+    box-shadow: 0 3px 10px #0002;
+}
+
+.valor {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.temperatura {
+    color: #d35400;
+}
+
+.humedad {
+    color: #2471a3;
+}
+.subtitulo, .nota {
+    color: #555;
+}
+
+.nota {
+    font-size: 13px;
+}
+
+table {
+    margin: 10px auto;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 3px 10px #0002;
+}
+
+th, td {
+    padding: 8px 14px;
+    border-bottom: 1px solid #e3e3e3;
+}
+
+th {
+    background: #216e39;
+    color: white;
+}

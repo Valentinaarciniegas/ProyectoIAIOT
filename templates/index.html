@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<!-- Actualizar la pagina cada 5 segundos -->
+		<meta http-equiv="refresh" content="5">
+		<title>Monitor IoT</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+	</head>
+	<body>
+		<h1>Monitor IoT</h1>
+		<p class="subtitulo">Lote {{ lote_id }} · Etapa: {{ etapa }} · Sensor {{ id_sensor }}</p>
+
+		<div class="contenedor">
+			<div class="tarjeta">
+				<h2>Temperatura</h2>
+				<div class="valor temperatura">{{ temperatura }}</div>
+				<p>Grados Celsius (°C)</p>
+			</div>
+
+			<div class="tarjeta">
+				<h2>Humedad</h2>
+				<div class="valor humedad">{{ humedad }}</div>
+				<p>Porcentaje (%)</p>
+			</div>
+		</div>
+
+		<p>Última medición: {{ fecha }}</p>
+		<p class="nota">Datos desde: {{ origen }} · La página se actualiza cada 5 segundos</p>
+
+		{% if historial %}
+		<h2>Últimas mediciones</h2>
+		<table>
+			<thead>
+				<tr><th>Fecha</th><th>Sensor</th><th>Lote</th><th>Etapa</th><th>T (°C)</th><th>HR (%)</th></tr>
+			</thead>
+			<tbody>
+				{% for m in historial %}
+				<tr>
+					<td>{{ m.fecha_local }}</td>
+					<td>{{ m.id_sensor }}</td>
+					<td>{{ m.lote_id }}</td>
+					<td>{{ m.etapa }}</td>
+					<td>{{ m.temperatura }}</td>
+					<td>{{ m.humedad }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% endif %}
+	</body>
+</html>

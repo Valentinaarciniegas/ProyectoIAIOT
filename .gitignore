@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+data/*.csv
+*.bak
+.env
+firmware/**/config.h
+CLAUDE.md
+.claude/
