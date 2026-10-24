@@ -79,4 +79,41 @@ Variables de entorno opcionales: `MONGO_URI`, `MONGO_DB`, `MONGO_COLECCION`, `CS
 
 ## Despliegue en AWS
 
-Pendiente: EC2 con la app en una subred pública con IP elástica, y MongoDB en una subred privada. Para la app solo cambia la variable `MONGO_URI`.
+Montado en AWS Academy (Learner Lab, región `us-east-1`). Dashboard: http://184.196.79.18:5000/
+
+```
+ESP32 ──internet──► IP elástica ──► EC2 cocatrace-app (subred pública 10.0.0.0/20)
+                                     Flask + gunicorn + CSV
+                                          │ TCP 27017 (solo desde el SG de la app)
+                                          ▼
+                                     EC2 cocatrace-mongo (subred privada 10.0.128.0/20)
+                                     MongoDB 8.0.20 con autenticación
+```
+
+**Red.** VPC `cocatrace-vpc` (`10.0.0.0/16`), creada con el asistente "VPC and more": una subred pública con Internet Gateway y una privada. La privada solo tuvo salida a internet por un NAT gateway mientras se instalaba MongoDB; después se eliminó el NAT.
+
+**Grupos de seguridad.**
+
+| Grupo | Entrada permitida |
+|---|---|
+| `cocatrace-app` | SSH (22) solo desde la IP del equipo; TCP 5000 desde `0.0.0.0/0` (ESP32 y navegador) |
+| `cocatrace-mongo` | TCP 27017 y SSH (22) **solo desde el grupo `cocatrace-app`** |
+
+**EC2 de MongoDB** (Ubuntu 24.04, sin IP pública):
+- MongoDB 8.0.20 del repositorio oficial `noble`, fijado con `apt-mark hold`.
+- `/etc/mongod.conf`: `bindIp: 127.0.0.1,<IP-privada>` y `security.authorization: enabled`.
+- Usuarios: `admin` (rol `root`) y `cocatrace_app` (rol `readWrite` solo sobre la base `cocatrace`), que es el que usa la app.
+- Se entra por SSH saltando desde la app (`ProxyJump`). MongoDB Compass se conecta con un túnel SSH por el EC2 de la app.
+
+**EC2 de la app** (Ubuntu 24.04, IP elástica):
+- Repositorio clonado en `~/ProyectoIAIOT`, con venv e `pip install -r requirements.txt`.
+- La conexión a Mongo va en `/etc/cocatrace.env` (permisos `600`, no se sube al repositorio):
+  ```
+  MONGO_URI=mongodb://cocatrace_app:<clave>@<IP-privada-mongo>:27017/cocatrace?authSource=cocatrace
+  ```
+- Servicio systemd `deploy/cocatrace-aws.service`, instalado como `/etc/systemd/system/cocatrace.service`. Es el mismo gunicorn que en local; solo cambian el usuario (`ubuntu`) y el `EnvironmentFile`.
+- El código de la app es idéntico al local: solo cambia la variable `MONGO_URI`.
+
+**ESP32.** En `config.h`, `SERVER_URL = "http://<IP-elástica>:5000/api/mediciones"`.
+
+**Learner Lab.** Al terminar la sesión, AWS apaga las instancias. Al volver, se encienden desde EC2 → Instancias. Los servicios arrancan solos y la IP elástica no cambia.

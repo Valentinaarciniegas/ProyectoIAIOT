@@ -1,0 +1,18 @@
+[Unit]
+Description=CocaTrace - API Flask (gunicorn) en AWS EC2, MongoDB en la subred privada
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/ProyectoIAIOT
+# MONGO_URI con usuario y clave (no se sube a GitHub). Ver README, seccion AWS.
+EnvironmentFile=/etc/cocatrace.env
+# 1 proceso con varios hilos: el Lock de app.py protege el CSV solo dentro de un proceso
+ExecStart=/home/ubuntu/ProyectoIAIOT/venv/bin/gunicorn --workers 1 --threads 4 --bind 0.0.0.0:5000 --access-logfile - app:app
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
