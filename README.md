@@ -1,6 +1,13 @@
 # Monitor IoT: temperatura y humedad con ESP32
 
-Servidor Flask que recibe las mediciones de un ESP32 con sensor DHT22 y las guarda en **MongoDB** y en un **CSV**. Es parte del proyecto de trazabilidad de bioproductos de hoja de coca: cada lectura queda asociada a un lote y a una etapa, que puede ser secado o almacenamiento.
+Servidor Flask que recibe las mediciones ( temperatura y humedad )  de un ESP32 con sensor DHT22 y las guarda en **MongoDB** y en un **CSV**. Es parte del proyecto de trazabilidad de bioproductos de hoja de coca: cada lectura queda asociada a un lote y a una etapa, que puede ser secado o almacenamiento.
+
+## Integrantes
+* Valentina Arciniegas
+* Davinson Tulande
+* Carlos Daza
+* Andres Coral
+## Estructura
 
 ## Estructura
 
@@ -51,6 +58,15 @@ JSON que envía el ESP32:
 - **Lecturas duplicadas:** las identifica por sensor + `ts_dispositivo` y responde `200` sin guardarlas de nuevo.
 - **Validación:** rechaza datos fuera del rango del DHT22 (−40 a 80 °C, 0 a 100 %HR) con `400`.
 
+## app.py
+
+Sistema de monitoreo en tiempo real para variables ambientales (temperatura y humedad) desarrollado con Flask para el backend web, permite observar las lecturas más recientes de temperatura y humedad. tambien existe la tabla con las últimas lecturas registradas, ordenadas de la más reciente a la más antigua.
+
+Se puede identificar la trazabilidad de datos asociada a un ID de sensor, número de lote y proceso específico.
+
+![app_py](docs/app.PNG)
+
+
 ## Ejecutar
 
 ```bash
@@ -76,6 +92,10 @@ Variables de entorno opcionales: `MONGO_URI`, `MONGO_DB`, `MONGO_COLECCION`, `CS
   - Logs: `journalctl -u cocatrace -f`
   - Reiniciar tras cambiar código: `sudo systemctl restart cocatrace`
 - En Windows, `scripts/iniciar.ps1` enciende la VM sin ventana y verifica los servicios. `scripts/apagar.ps1` la apaga de forma ordenada.
+
+ ## Diagrama de conexión
+ 
+ ![diagrama_conexión](docs/diagrama.png)
 
 ## Despliegue en AWS
 
