@@ -22,6 +22,7 @@ proyecto_iot/
 ├── static/css/styles.css
 ├── data/mediciones.csv     # Se crea automáticamente
 ├── firmware/cocatrace_th/  # Código del ESP32 (Arduino)
+├── docs # tiene manuales, guías o capturas de pantalla.
 └── requirements.txt
 ```
 
