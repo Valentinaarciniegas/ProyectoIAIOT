@@ -1,5 +1,5 @@
 #pragma once
-// Copia este archivo como config.h y pon tus datos (config.h no se sube a GitHub)
+// Este archivo contiene constantes para el codigo del ESP32, se puede copiar como config.h
 
 const char* WIFI_SSID  = "TU_RED_WIFI";      // solo redes de 2.4 GHz
 const char* WIFI_PASS  = "TU_CLAVE";
